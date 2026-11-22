@@ -30,6 +30,7 @@ DEFAULT_NAMES = {
 
 async def db_request(method, params=None, data=None, prefer=None):
     headers = HEADERS.copy()
+
     if prefer:
         headers["Prefer"] = prefer
 
@@ -41,10 +42,12 @@ async def db_request(method, params=None, data=None, prefer=None):
             params=params,
             json=data,
         )
+
         response.raise_for_status()
 
         if response.content:
             return response.json()
+
         return []
 
 
@@ -87,23 +90,7 @@ async def get_names(chat_id):
     return rows
 
 
-async def is_admin(update, context):
-    if update.effective_chat.type == "private":
-        return False
-
-    member = await context.bot.get_chat_member(
-        update.effective_chat.id,
-        update.effective_user.id,
-    )
-
-    return member.status in ("administrator", "creator")
-
-
 async def add_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_admin(update, context):
-        await update.message.reply_text("Бұл команданы тек админ қолдана алады.")
-        return
-
     if len(context.args) < 2:
         await update.message.reply_text(
             "Қолдану: /add m Меруерт"
@@ -114,7 +101,9 @@ async def add_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
     name = " ".join(context.args[1:]).strip()
 
     if not re.fullmatch(r"[a-z0-9_]{1,32}", command):
-        await update.message.reply_text("Команда тек ағылшын әріптері, сандар немесе _ болуы керек.")
+        await update.message.reply_text(
+            "Команда тек ағылшын әріптері, сандар немесе _ болуы керек."
+        )
         return
 
     await get_names(update.effective_chat.id)
@@ -130,14 +119,16 @@ async def add_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
         prefer="resolution=merge-duplicates,return=representation",
     )
 
-    await update.message.reply_text(f"Қосылды: /{command} → {name}")
+    await update.message.reply_text(
+        f"Қосылды: /{command} → {name}"
+    )
 
 
 async def delete_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-
     if len(context.args) != 1:
-        await update.message.reply_text("Қолдану: /del m")
+        await update.message.reply_text(
+            "Қолдану: /del m"
+        )
         return
 
     command = context.args[0].lower()
@@ -152,18 +143,18 @@ async def delete_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
         },
     )
 
-    await update.message.reply_text(f"/{command} өшірілді.")
+    await update.message.reply_text(
+        f"/{command} өшірілді."
+    )
 
 
 async def list_names(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_admin(update, context):
-        await update.message.reply_text("Бұл команданы тек админ қолдана алады.")
-        return
-
     rows = await get_names(update.effective_chat.id)
 
     if not rows:
-        await update.message.reply_text("Әзірге аттар жоқ.")
+        await update.message.reply_text(
+            "Әзірге аттар жоқ."
+        )
         return
 
     result = "\n".join(
@@ -184,12 +175,18 @@ async def name_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     rows = await get_names(update.effective_chat.id)
 
     name = next(
-        (row["display_name"] for row in rows if row["command"] == command),
+        (
+            row["display_name"]
+            for row in rows
+            if row["command"] == command
+        ),
         None,
     )
 
     if not name:
-        await update.message.reply_text("Мұндай команда табылмады.")
+        await update.message.reply_text(
+            "Мұндай команда табылмады."
+        )
         return
 
     await update.message.reply_text(
@@ -197,7 +194,9 @@ async def name_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-app = Application.builder().token(os.environ["BOT_TOKEN"]).build()
+app = Application.builder().token(
+    os.environ["BOT_TOKEN"]
+).build()
 
 app.add_handler(CommandHandler("add", add_name))
 app.add_handler(CommandHandler("del", delete_name))
