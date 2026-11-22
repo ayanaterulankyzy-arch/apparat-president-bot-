@@ -134,9 +134,7 @@ async def add_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def delete_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not await is_admin(update, context):
-        await update.message.reply_text("Бұл команданы тек админ қолдана алады.")
-        return
+
 
     if len(context.args) != 1:
         await update.message.reply_text("Қолдану: /del m")
