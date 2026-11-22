@@ -12,7 +12,7 @@ from telegram.ext import (
     filters,
 )
 
-SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
+SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/").removesuffix("/rest/v1")
 SUPABASE_KEY = os.environ["SUPABASE_KEY"]
 
 HEADERS = {
