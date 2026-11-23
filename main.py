@@ -37,7 +37,7 @@ async def start(
 ):
     await update.effective_message.reply_text(
         "Қош келдіңіз! 🏛\n"
-        "Apparat Presidenta боты іске қосылды."
+        "Apparat Prezidenta боты іске қосылды."
     )
 
 
