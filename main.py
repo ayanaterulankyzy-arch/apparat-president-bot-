@@ -4,6 +4,7 @@ import os
 from telegram import Update
 from telegram.ext import (
     Application,
+    CommandHandler,
     MessageHandler,
     ContextTypes,
     filters,
@@ -28,6 +29,16 @@ NAMES = {
     "da": "Daneshovv",
     "me": "medina",
 }
+
+
+async def start(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+):
+    await update.effective_message.reply_text(
+        "Қош келдіңіз! 🏛\n"
+        "Apparat Presidenta боты іске қосылды."
+    )
 
 
 async def name_command(
@@ -56,6 +67,8 @@ async def name_command(
 app = Application.builder().token(
     os.environ["BOT_TOKEN"]
 ).build()
+
+app.add_handler(CommandHandler("start", start))
 
 app.add_handler(
     MessageHandler(filters.COMMAND, name_command)
