@@ -28,6 +28,7 @@ NAMES = {
     "i": "indikoosh",
     "da": "Daneshovv",
     "me": "medina",
+    "al": "alua",
 }
 
 
